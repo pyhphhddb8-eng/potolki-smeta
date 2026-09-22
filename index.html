@@ -374,6 +374,51 @@
       .neizvestno li:last-child {
         margin-bottom: 0;
       }
+      .forma {
+        max-width: 520px;
+        margin-top: 20px;
+      }
+      .forma .uslovno {
+        margin-bottom: 16px;
+      }
+      .forma input[type="text"],
+      .forma input[type="tel"] {
+        width: 100%;
+        font: inherit;
+        padding: 11px 12px;
+        border: 1.5px solid var(--ramka);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--tekst);
+      }
+      .forma input:focus-visible {
+        outline: 3px solid var(--akcent);
+        outline-offset: 1px;
+      }
+      .forma__otvet {
+        margin: 0;
+        font-size: 15px;
+      }
+      .forma__otvet:empty {
+        display: none;
+      }
+      .forma__otvet--otkaz {
+        color: #8a2b12;
+        font-weight: 600;
+      }
+      .forma__otvet--demo {
+        color: var(--tekst-tihij);
+      }
+      .forma__granica {
+        margin-top: 18px;
+        border-top: 1px solid var(--ramka);
+        padding-top: 14px;
+      }
+      .podval code {
+        background: rgba(255, 255, 255, 0.14);
+        padding: 1px 5px;
+        border-radius: 4px;
+      }
       /* ОФОРМЛЕНИЕ: конец */
     </style>
     <style media="print">
@@ -842,14 +887,74 @@
       <section class="razdel prizyv ne-pechataem">
         <div class="obolochka">
           <h2>Записаться на замер</h2>
-          <!-- форма появится в Task 8 -->
+          <p>
+            Замер бесплатный и ни к чему не обязывает: после него вы получаете
+            точную цену и решаете сами.
+          </p>
+
+          <form class="kartochka forma" id="zayavka" novalidate>
+            <p class="uslovno">
+              Демонстрация: форма ничего не отправляет и ничего не сохраняет
+            </p>
+
+            <p class="pole">
+              <label for="imya">Как к вам обращаться</label>
+              <input type="text" id="imya" name="imya" autocomplete="name" />
+            </p>
+
+            <p class="pole">
+              <label for="telefon">Телефон</label>
+              <input
+                type="tel"
+                id="telefon"
+                name="telefon"
+                autocomplete="tel"
+                placeholder="+7 "
+              />
+            </p>
+
+            <p class="pole pole--galochka">
+              <label
+                ><input type="checkbox" id="soglasie" name="soglasie" />
+                Согласен на обработку персональных данных</label
+              >
+            </p>
+
+            <p>
+              <button type="button" class="knopka" id="otpravit">
+                Записаться на замер
+              </button>
+            </p>
+            <p class="forma__otvet" id="otvet-formy" role="status"></p>
+
+            <p class="tihij forma__granica">
+              Галочка не предзаполнена намеренно: заранее поставленная галочка
+              согласием не считается. Полный комплект документов, устройство
+              этой галочки и ответ на вопрос, куда физически падают заявки,
+              разобраны в соседней работе —
+              <a href="https://pyhphhddb8-eng.github.io/klinika-152fz/"
+                >комплект 152-ФЗ для сайта с онлайн-записью</a
+              >. Здесь то же самое второй раз не делается, но и притвориться,
+              что на лендинге с формой этого вопроса нет, нельзя.
+            </p>
+          </form>
         </div>
       </section>
     </main>
 
     <footer class="podval ne-pechataem">
       <div class="obolochka">
-        <!-- подвал появится в Task 8 -->
+        <p>
+          <strong>«Потолок за день»</strong> — вымышленная бригада. Название,
+          телефоны, сроки и цены условные: это демонстрационная работа для
+          портфолио, а не предложение услуг.
+        </p>
+        <p>
+          Расчёт на странице считается по прайсу из файла
+          <code>prajs.mjs</code> и покрыт тестами. Страница закрыта от поисковых
+          систем, заявок не принимает и никаких данных не хранит.
+        </p>
+        <p>Демо-работа портфолио · 2026</p>
       </div>
     </footer>
 
@@ -1068,6 +1173,25 @@
       naiti("pechat").addEventListener("click", () => {
         postavit_datu();
         window.print();
+      });
+
+      /* — форма — */
+
+      // Форма ничего не отправляет: это демонстрация. Но галочка работает
+      // по-настоящему — без неё кнопка отвечает отказом, а не «спасибо».
+      naiti("otpravit").addEventListener("click", () => {
+        const otvet = naiti("otvet-formy");
+        if (!naiti("soglasie").checked) {
+          otvet.className = "forma__otvet forma__otvet--otkaz";
+          otvet.textContent =
+            "Без согласия на обработку данных заявку принять нельзя.";
+          naiti("soglasie").focus();
+          return;
+        }
+        otvet.className = "forma__otvet forma__otvet--demo";
+        otvet.textContent =
+          "Это демонстрация: заявка никуда не ушла и нигде не сохранена. " +
+          "На настоящем сайте здесь начинается вопрос, где эти данные хранятся, — он разобран по ссылке ниже.";
       });
     </script>
   </body>
