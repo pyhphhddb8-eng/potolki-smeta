@@ -703,7 +703,8 @@
       const naiti = (id) => document.getElementById(id);
 
       /** Рубли по-русски: неразрывные пробелы в разрядах и знак валюты. */
-      const rubli = (n) => n.toLocaleString("ru-RU").replace(/ |\s/g, " ") + " ₽";
+      const rubli = (n) =>
+        n.toLocaleString("ru-RU").replace(/ |\s/g, " ") + " ₽";
 
       /** Количество: целое печатаем целым, дробное — с запятой. */
       const kolvo = (n) =>
@@ -791,6 +792,7 @@
 
       const smeta = naiti("smeta");
       const itogo = naiti("itogo");
+      const vyvod = document.querySelector(".raschet__vyvod");
       let tajmer_podsvetki = 0;
 
       function narisovat_smetu(rezultat, utochnenie) {
@@ -882,6 +884,12 @@
         });
 
       perescitat(null);
+
+      // Живую область включаем только после первой отрисовки: иначе программа
+      // чтения с экрана озвучивает всю смету сразу при загрузке страницы.
+      // С этого момента и дальше каждый пересчёт объявляется одним сообщением.
+      vyvod.setAttribute("aria-live", "polite");
+      vyvod.setAttribute("aria-atomic", "false");
     </script>
   </body>
 </html>
