@@ -358,12 +358,124 @@
         font-size: 15px;
         max-width: 52ch;
       }
+      #pechatnaya-shapka {
+        display: none;
+      }
+      .neizvestno {
+        margin-top: 26px;
+      }
+      .neizvestno ul {
+        margin: 0;
+        padding-left: 22px;
+      }
+      .neizvestno li {
+        margin-bottom: 8px;
+      }
+      .neizvestno li:last-child {
+        margin-bottom: 0;
+      }
       /* ОФОРМЛЕНИЕ: конец */
+    </style>
+    <style media="print">
+      /* ПЕЧАТЬ: начало */
+      @page {
+        size: A4;
+        margin: 16mm 14mm;
+      }
+      body {
+        background: #fff;
+        color: #000;
+        padding: 0;
+        font-size: 11pt;
+        line-height: 1.42;
+      }
+      /* Печатается смета, а не страница: ни первого экрана, ни вопросов, ни формы. */
+      .ne-pechataem {
+        display: none !important;
+      }
+      .razdel {
+        padding: 0;
+      }
+      .obolochka {
+        max-width: none;
+        padding: 0;
+      }
+      .raschet {
+        border: 0;
+        background: none;
+      }
+      .raschet__setka {
+        display: block;
+      }
+      #pechatnaya-shapka {
+        display: block;
+        margin-bottom: 6mm;
+        border-bottom: 1.5pt solid #000;
+        padding-bottom: 3mm;
+      }
+      .pechatnaya-shapka__kto {
+        font-size: 15pt;
+        font-weight: 700;
+        margin: 0 0 1mm;
+      }
+      .pechatnaya-shapka__data {
+        margin: 0 0 2mm;
+      }
+      .pechatnaya-shapka__ogovorka {
+        font-size: 9.5pt;
+        color: #333;
+        margin: 0;
+        max-width: none;
+      }
+      .smeta__spisok {
+        border-top: 1pt solid #000;
+      }
+      .stroka {
+        padding: 2.5mm 0;
+        border-bottom: 0.5pt solid #999;
+        border-radius: 0;
+        background: none !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .stroka__poyasnenie {
+        display: none;
+      } /* на бумаге место дороже, чем на экране */
+      .stroka__schet,
+      .itogo__podpis,
+      .itogo__poyasnenie {
+        color: #333;
+      }
+      .itogo__vilka {
+        color: #000;
+        font-size: 20pt;
+      }
+      .neizvestno,
+      .kartochka {
+        background: none;
+        border: 1pt solid #999;
+        border-radius: 0;
+        box-shadow: none;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-top: 5mm;
+        padding: 4mm;
+      }
+      h2,
+      h3 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      a {
+        color: #000;
+        text-decoration: underline;
+      }
+      /* ПЕЧАТЬ: конец */
     </style>
   </head>
   <body>
     <main>
-      <section class="razdel ekran">
+      <section class="razdel ekran ne-pechataem">
         <div class="obolochka">
           <p class="uslovno">Демонстрация. Компания и цены условные</p>
           <h1>Натяжные потолки в квартире — за один день</h1>
@@ -379,7 +491,7 @@
         </div>
       </section>
 
-      <section class="razdel polosa">
+      <section class="razdel polosa ne-pechataem">
         <div class="obolochka setka setka--4">
           <div class="kartochka">
             <p class="polosa__cifra">1 день</p>
@@ -404,7 +516,7 @@
         </p>
       </section>
 
-      <section class="razdel problema">
+      <section class="razdel problema ne-pechataem">
         <div class="obolochka">
           <h2>«Назвали цену за метр, а в счёте вышло вдвое больше»</h2>
           <div class="setka setka--2">
@@ -432,7 +544,7 @@
         </div>
       </section>
 
-      <section class="razdel shagi">
+      <section class="razdel shagi ne-pechataem">
         <div class="obolochka">
           <h2>Как проходит работа</h2>
           <ol class="shagi__spisok setka setka--2">
@@ -468,7 +580,7 @@
         </div>
       </section>
 
-      <section class="razdel vhodit">
+      <section class="razdel vhodit ne-pechataem">
         <div class="obolochka">
           <h2>Что уже входит в цену</h2>
           <div class="setka setka--2">
@@ -488,7 +600,7 @@
         </div>
       </section>
 
-      <section class="razdel razbor">
+      <section class="razdel razbor ne-pechataem">
         <div class="obolochka">
           <h2>Разбор одной сметы</h2>
           <p>
@@ -538,13 +650,13 @@
 
       <section class="razdel raschet" id="raschet">
         <div class="obolochka">
-          <h2>Смета на вашу комнату</h2>
-          <p>
+          <h2 class="ne-pechataem">Смета на вашу комнату</h2>
+          <p class="ne-pechataem">
             Введите размеры и уточните пять вещей. Каждое уточнение сразу
             двигает итог и подсвечивает строку, на которую повлияло.
           </p>
           <div class="raschet__setka">
-            <div class="raschet__upravlenie">
+            <div class="raschet__upravlenie ne-pechataem">
               <fieldset class="pole">
                 <legend>Размеры комнат, метры</legend>
                 <div id="komnaty"></div>
@@ -619,14 +731,61 @@
               </p>
             </div>
             <div class="raschet__vyvod">
+              <div id="pechatnaya-shapka">
+                <p class="pechatnaya-shapka__kto">
+                  «Потолок за день» — предварительная смета
+                </p>
+                <p class="pechatnaya-shapka__data" id="data-rascheta"></p>
+                <p class="pechatnaya-shapka__ogovorka">
+                  Компания и цены условные: это демонстрационный расчёт. Цена
+                  предварительная и уточняется на замере — итог указан вилкой.
+                </p>
+              </div>
               <div id="smeta"></div>
               <div id="itogo"></div>
+
+              <p class="ne-pechataem">
+                <button type="button" class="knopka--tihaya" id="pechat">
+                  Распечатать смету
+                </button>
+              </p>
+
+              <div class="kartochka neizvestno">
+                <h3>Чего этот расчёт не знает</h3>
+                <p>
+                  Всё перечисленное выяснится на замере и может сдвинуть цену
+                  внутри вилки. Это не отговорка: мастер скажет то же самое,
+                  просто на два дня позже.
+                </p>
+                <ul>
+                  <li>
+                    <strong>Состояние стен.</strong> Осыпающуюся штукатурку под
+                    профиль крепить нельзя, её укрепляют.
+                  </li>
+                  <li>
+                    <strong>Высота помещения.</strong> Потолки выше трёх метров
+                    — это подмости и другая скорость работы.
+                  </li>
+                  <li>
+                    <strong>Нестандартные углы.</strong> Скруглённые стены и
+                    эркеры считаются не по числу углов.
+                  </li>
+                  <li>
+                    <strong>Закладная под тяжёлую люстру.</strong> Если люстра
+                    больше 3 кг, под неё ставится отдельная платформа.
+                  </li>
+                  <li>
+                    <strong>Подъезд и лифт.</strong> Трёхметровый профиль не
+                    всегда проходит в лифт, иногда его несут пешком.
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="razdel voprosy">
+      <section class="razdel voprosy ne-pechataem">
         <div class="obolochka">
           <h2>Вопросы, которые задают до замера</h2>
           <div class="setka">
@@ -680,7 +839,7 @@
         </div>
       </section>
 
-      <section class="razdel prizyv">
+      <section class="razdel prizyv ne-pechataem">
         <div class="obolochka">
           <h2>Записаться на замер</h2>
           <!-- форма появится в Task 8 -->
@@ -688,7 +847,7 @@
       </section>
     </main>
 
-    <footer class="podval">
+    <footer class="podval ne-pechataem">
       <div class="obolochka">
         <!-- подвал появится в Task 8 -->
       </div>
@@ -890,6 +1049,26 @@
       // С этого момента и дальше каждый пересчёт объявляется одним сообщением.
       vyvod.setAttribute("aria-live", "polite");
       vyvod.setAttribute("aria-atomic", "false");
+
+      /* — печать — */
+
+      // Дата ставится перед самой печатью, а не при загрузке: страница может быть
+      // открыта со вчера, а на бумаге должна стоять дата расчёта, не дата визита.
+      function postavit_datu() {
+        naiti("data-rascheta").textContent =
+          "Расчёт от " +
+          new Date().toLocaleDateString("ru-RU", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+      }
+
+      window.addEventListener("beforeprint", postavit_datu);
+      naiti("pechat").addEventListener("click", () => {
+        postavit_datu();
+        window.print();
+      });
     </script>
   </body>
 </html>
