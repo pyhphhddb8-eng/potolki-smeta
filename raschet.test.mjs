@@ -209,3 +209,65 @@ test("итог по-прежнему равен сумме строк, когд�
     r.stroki.reduce((s, str) => s + str.summa, 0),
   );
 });
+
+/* — вилка — */
+
+test("нижняя граница вилки никогда не выше верхней", () => {
+  const nabory = [
+    vvod(),
+    vvod({ komnaty: [{ dlina: 1.2, shirina: 1.1 }] }),
+    vvod({ komnaty: [{ dlina: 0.1, shirina: 0.1 }] }),
+    vvod({
+      svetilniki: 30,
+      obvody: 10,
+      ugly: 8,
+      demontazh: true,
+      polotno: "tkanevoe",
+    }),
+    vvod({
+      komnaty: [
+        { dlina: 20, shirina: 20 },
+        { dlina: 20, shirina: 20 },
+        { dlina: 20, shirina: 20 },
+      ],
+    }),
+  ];
+  for (const nabor of nabory) {
+    const r = poschitat(nabor, PRAJS);
+    assert.ok(
+      r.vilka.ot <= r.vilka.do,
+      `вилка вывернута: ${JSON.stringify(r.vilka)}`,
+    );
+  }
+});
+
+test("вилка построена от итога по ширине из прайса", () => {
+  const r = poschitat(vvod(), PRAJS);
+  assert.ok(r.vilka.ot <= r.itogo && r.itogo <= r.vilka.do);
+  assert.equal(
+    r.vilka.ot,
+    Math.round((r.itogo * (1 - PRAJS.vilka.vniz)) / 100) * 100,
+  );
+  assert.equal(
+    r.vilka.do,
+    Math.round((r.itogo * (1 + PRAJS.vilka.vverh)) / 100) * 100,
+  );
+});
+
+test("вилка округлена до сотен: точная цифра внутри вилки — обман", () => {
+  const r = poschitat(vvod({ svetilniki: 3, obvody: 1 }), PRAJS);
+  assert.equal(r.vilka.ot % 100, 0);
+  assert.equal(r.vilka.do % 100, 0);
+});
+
+test("нулевая площадь даёт нулевую вилку, а не вилку от выезда", () => {
+  const r = poschitat(vvod({ komnaty: [] }), PRAJS);
+  assert.deepEqual(r.vilka, { ot: 0, do: 0 });
+});
+
+test("вилка двигается вместе с итогом при каждом уточнении", () => {
+  const bazovaya = poschitat(vvod(), PRAJS).vilka;
+  const s_demontazhem = poschitat(vvod({ demontazh: true }), PRAJS).vilka;
+  assert.ok(s_demontazhem.ot > bazovaya.ot);
+  assert.ok(s_demontazhem.do > bazovaya.do);
+});

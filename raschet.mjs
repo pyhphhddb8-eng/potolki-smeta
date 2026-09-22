@@ -24,6 +24,11 @@ function metry(znachenie) {
   return Math.round(znachenie * 100) / 100;
 }
 
+/** До сотен рублей: вилка с точностью до рубля перестаёт быть вилкой. */
+function sotni(rubli) {
+  return Math.round(rubli / 100) * 100;
+}
+
 /** Одна строка сметы. Сумма округляется до рубля сразу, чтобы итог сошёлся. */
 function stroka({
   id,
@@ -172,5 +177,12 @@ export function poschitat(vvod, prajs) {
 
   const itogo = stroki.reduce((s, str) => s + str.summa, 0);
 
-  return { ploshad, perimetr, stroki, itogo, vilka: { ot: itogo, do: itogo } };
+  // Ширину вилки задаёт прайс, а не настроение. Вниз двигает ровный потолок
+  // и простая геометрия, вверх — то, что видно только на замере.
+  const vilka = {
+    ot: sotni(itogo * (1 - prajs.vilka.vniz)),
+    do: sotni(itogo * (1 + prajs.vilka.vverh)),
+  };
+
+  return { ploshad, perimetr, stroki, itogo, vilka };
 }
