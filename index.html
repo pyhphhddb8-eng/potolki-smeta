@@ -237,6 +237,127 @@
       .podval a {
         color: #fff;
       }
+      .pole {
+        display: block;
+        margin: 0 0 18px;
+      }
+      .pole label,
+      .pole legend {
+        display: block;
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .pole--galochka label {
+        font-weight: 400;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      fieldset.pole {
+        border: 1px solid var(--ramka);
+        border-radius: 10px;
+        padding: 14px 16px;
+      }
+      .pole__podskazka {
+        display: block;
+        color: var(--tekst-tihij);
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .pole input[type="number"],
+      .pole select {
+        width: 100%;
+        font: inherit;
+        padding: 11px 12px;
+        border: 1.5px solid var(--ramka);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--tekst);
+      }
+      .pole input:focus-visible,
+      .pole select:focus-visible {
+        outline: 3px solid var(--akcent);
+        outline-offset: 1px;
+      }
+      .komnata {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .komnata__nomer {
+        color: var(--tekst-tihij);
+        font-size: 14px;
+        width: 1.2em;
+        flex: none;
+      }
+      .komnata__pole {
+        width: 100%;
+        font: inherit;
+        padding: 11px 12px;
+        border: 1.5px solid var(--ramka);
+        border-radius: 8px;
+      }
+      .smeta__shapka {
+        color: var(--tekst-tihij);
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      .smeta__pusto {
+        color: var(--tekst-tihij);
+      }
+      .smeta__spisok {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--ramka);
+      }
+      .stroka {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 2px 14px;
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--ramka);
+        border-radius: 8px;
+        transition: background 0.25s ease;
+      }
+      .stroka__nazvanie {
+        font-weight: 600;
+      }
+      .stroka__poyasnenie,
+      .stroka__schet {
+        color: var(--tekst-tihij);
+        font-size: 14px;
+        grid-column: 1;
+      }
+      .stroka__summa {
+        grid-row: 1/3;
+        align-self: center;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .stroka--dvinulas {
+        background: var(--akcent-fon);
+      }
+      .itogo__podpis {
+        color: var(--tekst-tihij);
+        font-size: 15px;
+        margin: 22px 0 2px;
+      }
+      .itogo__vilka {
+        font-size: clamp(26px, 4.6vw, 36px);
+        font-weight: 700;
+        color: var(--akcent);
+        margin: 0 0 8px;
+        font-variant-numeric: tabular-nums;
+      }
+      .itogo__poyasnenie {
+        color: var(--tekst-tihij);
+        font-size: 15px;
+        max-width: 52ch;
+      }
       /* ОФОРМЛЕНИЕ: конец */
     </style>
   </head>
@@ -424,7 +545,78 @@
           </p>
           <div class="raschet__setka">
             <div class="raschet__upravlenie">
-              <!-- поля появятся в Task 6 -->
+              <fieldset class="pole">
+                <legend>Размеры комнат, метры</legend>
+                <div id="komnaty"></div>
+                <button
+                  type="button"
+                  class="knopka--tihaya"
+                  id="dobavit-komnatu"
+                >
+                  Добавить комнату
+                </button>
+              </fieldset>
+
+              <p class="pole">
+                <label for="polotno">Тип полотна</label>
+                <select id="polotno" data-utochnenie="polotno"></select>
+              </p>
+
+              <p class="pole">
+                <label for="svetilniki">Светильников, шт</label>
+                <input
+                  type="number"
+                  id="svetilniki"
+                  data-utochnenie="svetilniki"
+                  value="0"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                />
+              </p>
+
+              <p class="pole">
+                <label for="obvody">Обводов труб, шт</label>
+                <input
+                  type="number"
+                  id="obvody"
+                  data-utochnenie="obvody"
+                  value="0"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                />
+                <span class="pole__podskazka"
+                  >Трубы отопления, проходящие через потолок</span
+                >
+              </p>
+
+              <p class="pole">
+                <label for="ugly">Углов сверх четырёх, шт</label>
+                <input
+                  type="number"
+                  id="ugly"
+                  data-utochnenie="ugly"
+                  value="0"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                />
+                <span class="pole__podskazka"
+                  >Ниши, выступы, короба. Прямоугольная комната — ноль</span
+                >
+              </p>
+
+              <p class="pole pole--galochka">
+                <label
+                  ><input
+                    type="checkbox"
+                    id="demontazh"
+                    data-utochnenie="demontazh"
+                  />
+                  Снять старый натяжной потолок</label
+                >
+              </p>
             </div>
             <div class="raschet__vyvod">
               <div id="smeta"></div>
@@ -501,5 +693,195 @@
         <!-- подвал появится в Task 8 -->
       </div>
     </footer>
+
+    <script type="module">
+      import { poschitat, PREDELY } from "./raschet.mjs";
+      import { PRAJS } from "./prajs.mjs";
+
+      /* — мелкие помощники — */
+
+      const naiti = (id) => document.getElementById(id);
+
+      /** Рубли по-русски: неразрывные пробелы в разрядах и знак валюты. */
+      const rubli = (n) => n.toLocaleString("ru-RU").replace(/ |\s/g, " ") + " ₽";
+
+      /** Количество: целое печатаем целым, дробное — с запятой. */
+      const kolvo = (n) =>
+        Number.isInteger(n) ? String(n) : n.toFixed(2).replace(".", ",");
+
+      function element(teg, klass, tekst) {
+        const uzel = document.createElement(teg);
+        if (klass) uzel.className = klass;
+        if (tekst !== undefined) uzel.textContent = tekst;
+        return uzel;
+      }
+
+      /* — комнаты — */
+
+      const komnaty = naiti("komnaty");
+
+      function dobavit_komnatu(nomer) {
+        const ryad = element("div", "komnata");
+        ryad.append(element("span", "komnata__nomer", `${nomer}`));
+        for (const [imya, podpis] of [
+          ["dlina", "длина"],
+          ["shirina", "ширина"],
+        ]) {
+          const pole = document.createElement("input");
+          pole.type = "number";
+          pole.className = `komnata__pole komnata__${imya}`;
+          pole.min = "0";
+          pole.max = String(PREDELY.storona);
+          pole.step = "0.1";
+          pole.inputMode = "decimal";
+          pole.placeholder = podpis;
+          pole.setAttribute(
+            "aria-label",
+            `Комната ${nomer}, ${podpis} в метрах`,
+          );
+          pole.dataset.utochnenie = "razmery";
+          ryad.append(pole);
+        }
+        komnaty.append(ryad);
+      }
+
+      dobavit_komnatu(1);
+      naiti("komnaty").querySelector(".komnata__dlina").value = "3.2";
+      naiti("komnaty").querySelector(".komnata__shirina").value = "2.8";
+
+      const knopka_komnaty = naiti("dobavit-komnatu");
+      knopka_komnaty.addEventListener("click", () => {
+        const skolko = komnaty.children.length;
+        if (skolko >= PREDELY.komnat) return;
+        dobavit_komnatu(skolko + 1);
+        if (komnaty.children.length >= PREDELY.komnat)
+          knopka_komnaty.hidden = true;
+        perescitat("razmery");
+      });
+
+      /* — тип полотна: пункты строятся из прайса, а не пишутся в разметку — */
+
+      const vybor_polotna = naiti("polotno");
+      for (const [klyuch, vid] of Object.entries(PRAJS.polotno)) {
+        const punkt = element(
+          "option",
+          null,
+          `${vid.nazvanie} — ${rubli(vid.cena_za_m2)}/м²`,
+        );
+        punkt.value = klyuch;
+        vybor_polotna.append(punkt);
+      }
+      vybor_polotna.value = PRAJS.polotno_po_umolchaniyu;
+
+      /* — сбор ввода и перерисовка — */
+
+      function sobrat() {
+        return {
+          komnaty: [...komnaty.children].map((ryad) => ({
+            dlina: ryad.querySelector(".komnata__dlina").value,
+            shirina: ryad.querySelector(".komnata__shirina").value,
+          })),
+          polotno: vybor_polotna.value,
+          svetilniki: naiti("svetilniki").value,
+          obvody: naiti("obvody").value,
+          ugly: naiti("ugly").value,
+          demontazh: naiti("demontazh").checked,
+        };
+      }
+
+      const smeta = naiti("smeta");
+      const itogo = naiti("itogo");
+      let tajmer_podsvetki = 0;
+
+      function narisovat_smetu(rezultat, utochnenie) {
+        smeta.replaceChildren();
+
+        if (rezultat.stroki.length === 0) {
+          smeta.append(
+            element(
+              "p",
+              "smeta__pusto",
+              "Введите размеры комнаты — смета появится здесь.",
+            ),
+          );
+          itogo.replaceChildren();
+          return;
+        }
+
+        const shapka = element(
+          "p",
+          "smeta__shapka",
+          `Площадь ${kolvo(rezultat.ploshad)} м², периметр ${kolvo(rezultat.perimetr)} м`,
+        );
+        smeta.append(shapka);
+
+        const spisok = element("ul", "smeta__spisok");
+        for (const stroka of rezultat.stroki) {
+          const punkt = element("li", "stroka");
+          punkt.dataset.id = stroka.id;
+          if (stroka.utochnenie) punkt.dataset.utochnenie = stroka.utochnenie;
+          punkt.append(
+            element("span", "stroka__nazvanie", stroka.nazvanie),
+            element("span", "stroka__poyasnenie", stroka.poyasnenie),
+            element(
+              "span",
+              "stroka__schet",
+              `${kolvo(stroka.kolichestvo)} ${stroka.edinica} × ${rubli(stroka.cena)}`,
+            ),
+            element("span", "stroka__summa", rubli(stroka.summa)),
+          );
+          spisok.append(punkt);
+        }
+        smeta.append(spisok);
+
+        itogo.replaceChildren(
+          element("p", "itogo__podpis", "Предварительно, до замера"),
+          element(
+            "p",
+            "itogo__vilka",
+            `${rubli(rezultat.vilka.ot)} — ${rubli(rezultat.vilka.do)}`,
+          ),
+          element(
+            "p",
+            "itogo__poyasnenie",
+            "Сумма строк — " +
+              rubli(rezultat.itogo) +
+              ". Вилка шире: точную цену называют после замера, когда видно стены, высоту и то, что скрыто за старым потолком.",
+          ),
+        );
+
+        // Подсвечиваем ровно те строки, на которые влияет только что тронутое поле.
+        // Сравнивать суммы «до и после» нельзя: два уточнения подряд могут
+        // скомпенсировать друг друга, и подсветка соврёт.
+        if (utochnenie) {
+          clearTimeout(tajmer_podsvetki);
+          const dvinulis = spisok.querySelectorAll(
+            `[data-utochnenie="${utochnenie}"]`,
+          );
+          for (const uzel of dvinulis) uzel.classList.add("stroka--dvinulas");
+          tajmer_podsvetki = setTimeout(() => {
+            for (const uzel of dvinulis)
+              uzel.classList.remove("stroka--dvinulas");
+          }, 1200);
+        }
+      }
+
+      function perescitat(utochnenie) {
+        narisovat_smetu(poschitat(sobrat(), PRAJS), utochnenie);
+      }
+
+      document
+        .querySelector(".raschet__upravlenie")
+        .addEventListener("input", (sobytie) => {
+          perescitat(sobytie.target.dataset.utochnenie);
+        });
+      document
+        .querySelector(".raschet__upravlenie")
+        .addEventListener("change", (sobytie) => {
+          perescitat(sobytie.target.dataset.utochnenie);
+        });
+
+      perescitat(null);
+    </script>
   </body>
 </html>
