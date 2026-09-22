@@ -44,7 +44,7 @@ def simvoly_stranicy():
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "0123456789"
         " .,:;!?—–-«»\"'()[]{}/\\%№×→•…+=@#&*_|<>"
-        "₽²✓ "
+        "₽²✓ "
     )
     nabor = set(bez_tegov + prajs + zapas) - set("\n\r\t")
     return "".join(sorted(nabor))
