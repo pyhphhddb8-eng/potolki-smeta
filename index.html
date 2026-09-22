@@ -34,7 +34,6 @@
         --ramka: #dde2e8;
         --sinij: #1b3a5c; /* на белом 11,6, белый на нём 11,6 */
         --sinij-svetlyj: #e8f0f8;
-        --sinij-kod: #3b5673; /* сплошной цвет вместо белого с прозрачностью 0,14 по синему — тот же оттенок на глаз, но однозначный для контраста */
         --akcent: #b4541f; /* на белом 4,9 — цифры итога и подсветка */
         --akcent-fon: #fdf1e7;
         --zelenyj: #1d6b45;
@@ -427,7 +426,7 @@
         padding-top: 14px;
       }
       .podval code {
-        background: var(--sinij-kod);
+        background: rgba(255, 255, 255, 0.14);
         padding: 1px 5px;
         border-radius: 4px;
       }

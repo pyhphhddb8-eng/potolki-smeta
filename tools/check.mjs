@@ -6,7 +6,14 @@
 //   node tools/check.mjs https://pyhphhddb8-eng.github.io/potolki-smeta/
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { extname, resolve, dirname, join } from "node:path";
+import {
+  extname,
+  resolve,
+  dirname,
+  join,
+  relative,
+  isAbsolute,
+} from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { PRAJS } from "../prajs.mjs";
@@ -24,11 +31,27 @@ const TIPY = {
   ".txt": "text/plain; charset=utf-8",
 };
 
+/* — путь остаётся внутри репозитория: без этого «../../../etc/passwd» уводит наружу — */
+const vnutri_kornya = (fajl) => {
+  const otnositelnyj = relative(KOREN, fajl);
+  return (
+    otnositelnyj === "" ||
+    (!otnositelnyj.startsWith("..") && !isAbsolute(otnositelnyj))
+  );
+};
+
 const server = ZHIVOJ
   ? null
   : createServer(async (zapros, otvet) => {
-      const put = join(KOREN, decodeURIComponent(zapros.url.split("?")[0]));
-      const fajl = zapros.url === "/" ? join(KOREN, "index.html") : put;
+      const put =
+        zapros.url === "/"
+          ? join(KOREN, "index.html")
+          : join(KOREN, decodeURIComponent(zapros.url.split("?")[0]));
+      const fajl = resolve(put);
+      if (!vnutri_kornya(fajl)) {
+        otvet.writeHead(404).end("нет такого файла");
+        return;
+      }
       try {
         const telo = await readFile(fajl);
         otvet.writeHead(200, {
@@ -39,7 +62,8 @@ const server = ZHIVOJ
         otvet.writeHead(404).end("нет такого файла");
       }
     });
-if (server) await new Promise((gotovo) => server.listen(PORT, gotovo));
+if (server)
+  await new Promise((gotovo) => server.listen(PORT, "127.0.0.1", gotovo));
 
 const provaly = [];
 const otmetit = (uslovie, opisanie) => {
@@ -152,17 +176,36 @@ const kontrast = await page.evaluate(() => {
     c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const yarkost = ([r, g, b]) =>
     0.2126 * kanal(r / 255) + 0.7152 * kanal(g / 255) + 0.0722 * kanal(b / 255);
-  const razobrat = (cvet) =>
-    cvet
-      .match(/[\d.]+/g)
-      .slice(0, 3)
-      .map(Number);
+  /* — цвет со своей прозрачностью: rgb(...) без альфы читается как a=1 — */
+  const razobrat = (cvet) => {
+    const [r, g, b, a = 1] = (cvet.match(/[\d.]+/g) || [0, 0, 0, 0]).map(
+      Number,
+    );
+    return [r, g, b, a];
+  };
+  /* — верхний слой [r,g,b,a] поверх непрозрачной подложки [r,g,b] — */
+  const smeshat = (verhnij, nizhnij) => {
+    const a = verhnij[3];
+    return [
+      verhnij[0] * a + nizhnij[0] * (1 - a),
+      verhnij[1] * a + nizhnij[1] * (1 - a),
+      verhnij[2] * a + nizhnij[2] * (1 - a),
+    ];
+  };
+  /* — фон элемента: копим все фоны от него самого до корня страницы и
+     смешиваем по порядку снизу вверх, а не берём первый попавшийся —
+     полупрозрачный фон иначе считается по буквальным rgb без учёта того,
+     что под ним, и результат может быть как ложным провалом, так и
+     ложным пропуском — */
   const fon = (uzel) => {
+    const sloi = [];
     for (let u = uzel; u; u = u.parentElement) {
-      const c = getComputedStyle(u).backgroundColor;
-      if (c && !/rgba\(0, 0, 0, 0\)|transparent/.test(c)) return razobrat(c);
+      const cvet = razobrat(getComputedStyle(u).backgroundColor);
+      if (cvet[3] > 0) sloi.push(cvet);
     }
-    return [255, 255, 255];
+    let itog = [255, 255, 255]; // подложка страницы по умолчанию, если фонов вообще нет
+    for (let i = sloi.length - 1; i >= 0; i--) itog = smeshat(sloi[i], itog);
+    return itog;
   };
   const plohie = [];
   for (const uzel of document.querySelectorAll(
@@ -171,8 +214,12 @@ const kontrast = await page.evaluate(() => {
     if (!uzel.textContent.trim()) continue;
     if (!uzel.offsetParent && uzel.tagName !== "BODY") continue;
     const stil = getComputedStyle(uzel);
-    const t = yarkost(razobrat(stil.color));
-    const f = yarkost(fon(uzel));
+    const fon_uzla = fon(uzel);
+    const cvet_teksta = razobrat(stil.color);
+    const t = yarkost(
+      cvet_teksta[3] < 1 ? smeshat(cvet_teksta, fon_uzla) : cvet_teksta,
+    );
+    const f = yarkost(fon_uzla);
     const otnoshenie = (Math.max(t, f) + 0.05) / (Math.min(t, f) + 0.05);
     if (otnoshenie < 4.5) {
       plohie.push(

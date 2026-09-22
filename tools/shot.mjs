@@ -2,7 +2,14 @@
 // Кладёт в tools/shots/: страницу целиком на 1280 и на 360 и печатный вид PDF.
 import { createServer } from "node:http";
 import { readFile, mkdir } from "node:fs/promises";
-import { extname, resolve, dirname, join } from "node:path";
+import {
+  extname,
+  resolve,
+  dirname,
+  join,
+  relative,
+  isAbsolute,
+} from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
@@ -15,12 +22,26 @@ const TIPY = {
   ".txt": "text/plain; charset=utf-8",
 };
 
+/* — путь остаётся внутри репозитория: без этого «../../../etc/passwd» уводит наружу — */
+const vnutri_kornya = (fajl) => {
+  const otnositelnyj = relative(KOREN, fajl);
+  return (
+    otnositelnyj === "" ||
+    (!otnositelnyj.startsWith("..") && !isAbsolute(otnositelnyj))
+  );
+};
+
 await mkdir(SHOTS, { recursive: true });
 const server = createServer(async (zapros, otvet) => {
-  const fajl =
+  const put =
     zapros.url === "/"
       ? join(KOREN, "index.html")
       : join(KOREN, decodeURIComponent(zapros.url));
+  const fajl = resolve(put);
+  if (!vnutri_kornya(fajl)) {
+    otvet.writeHead(404).end("нет");
+    return;
+  }
   try {
     otvet.writeHead(200, {
       "content-type": TIPY[extname(fajl)] || "application/octet-stream",
@@ -30,7 +51,7 @@ const server = createServer(async (zapros, otvet) => {
     otvet.writeHead(404).end("нет");
   }
 });
-await new Promise((gotovo) => server.listen(PORT, gotovo));
+await new Promise((gotovo) => server.listen(PORT, "127.0.0.1", gotovo));
 
 const browser = await chromium.launch();
 for (const [imya, shirina] of [
