@@ -1,0 +1,15 @@
+{
+  "name": "potolki-smeta",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Лендинг натяжных потолков со сметой и уточняющим квизом",
+  "scripts": {
+    "test": "node --test",
+    "check": "node tools/check.mjs",
+    "shot": "node tools/shot.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}
