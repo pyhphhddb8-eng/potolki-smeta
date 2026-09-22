@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Натяжные потолки за день — смета на экране, без звонка</title>
+    <meta
+      name="description"
+      content="Демонстрационный лендинг: расчёт натяжного потолка построчной сметой, пять уточнений и итог вилкой. Компания и цены условные."
+    />
+    <!-- Компания вымышленная, цены условные: в поисковой выдаче такой странице не место. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%231b3a5c%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%229%22%20width%3D%2222%22%20height%3D%224%22%20rx%3D%221.5%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2217%22%20width%3D%2216%22%20height%3D%222.6%22%20rx%3D%221.3%22%20fill%3D%22%2374a9dc%22%2F%3E%3Crect%20x%3D%2211%22%20y%3D%2223%22%20width%3D%2210%22%20height%3D%222.6%22%20rx%3D%221.3%22%20fill%3D%22%2374a9dc%22%2F%3E%3C%2Fsvg%3E"
+    />
+    <style>
+      /* ОФОРМЛЕНИЕ: начало */
+      :root {
+        --fon: #f6f7f9;
+        --karta: #ffffff;
+        --tekst: #15212e; /* на белом даёт 14,9 по WCAG */
+        --tekst-tihij: #4d5b6b; /* на белом 7,2 — вторичный текст остаётся читаемым */
+        --ramka: #dde2e8;
+        --sinij: #1b3a5c; /* на белом 11,6, белый на нём 11,6 */
+        --sinij-svetlyj: #e8f0f8;
+        --akcent: #b4541f; /* на белом 4,9 — цифры итога и подсветка */
+        --akcent-fon: #fdf1e7;
+        --zelenyj: #1d6b45;
+        --radius: 12px;
+        --shag: clamp(16px, 4vw, 28px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--fon);
+        color: var(--tekst);
+        font:
+          400 17px/1.6 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-text-size-adjust: 100%;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      .obolochka {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 0 var(--shag);
+      }
+      .razdel {
+        padding: clamp(40px, 7vw, 72px) 0;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.22;
+        margin: 0 0 0.5em;
+        text-wrap: balance;
+      }
+      h1 {
+        font-size: clamp(28px, 5.4vw, 44px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      h2 {
+        font-size: clamp(23px, 3.6vw, 32px);
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      h3 {
+        font-size: clamp(18px, 2.4vw, 21px);
+        font-weight: 600;
+      }
+      p {
+        margin: 0 0 1em;
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+      a {
+        color: var(--sinij);
+      }
+      .kartochka {
+        background: var(--karta);
+        border: 1px solid var(--ramka);
+        border-radius: var(--radius);
+        padding: clamp(18px, 3vw, 26px);
+      }
+      .setka {
+        display: grid;
+        gap: clamp(12px, 2vw, 18px);
+      }
+      @media (min-width: 720px) {
+        .setka--2 {
+          grid-template-columns: 1fr 1fr;
+        }
+        .setka--4 {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      .knopka {
+        display: inline-block;
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+        background: var(--sinij);
+        color: #fff;
+        font: 600 18px/1 inherit;
+        padding: 16px 28px;
+        text-decoration: none;
+        transition: background 0.15s ease;
+      }
+      .knopka:hover {
+        background: #12293f;
+      }
+      .knopka:focus-visible {
+        outline: 3px solid var(--akcent);
+        outline-offset: 2px;
+      }
+      .knopka--tihaya {
+        background: transparent;
+        color: var(--sinij);
+        border: 1.5px solid var(--sinij);
+        font-size: 16px;
+        padding: 12px 20px;
+      }
+      .knopka--tihaya:hover {
+        background: var(--sinij-svetlyj);
+      }
+      .tihij {
+        color: var(--tekst-tihij);
+        font-size: 15px;
+      }
+      .uslovno {
+        display: inline-block;
+        background: var(--akcent-fon);
+        color: #7a3612;
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .ekran {
+        background: linear-gradient(180deg, var(--sinij-svetlyj), var(--fon));
+        padding-top: clamp(28px, 5vw, 56px);
+      }
+      .ekran__podzagolovok {
+        font-size: clamp(18px, 2.6vw, 21px);
+        max-width: 44ch;
+        color: var(--tekst-tihij);
+      }
+      .ekran .tihij {
+        max-width: 52ch;
+        margin-top: 14px;
+      }
+      .polosa {
+        padding-top: 0;
+      }
+      .polosa__cifra {
+        font-size: clamp(24px, 3.4vw, 30px);
+        font-weight: 700;
+        color: var(--sinij);
+        margin: 0 0 4px;
+      }
+      .polosa .tihij {
+        margin-top: 14px;
+      }
+      .shagi__spisok {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        counter-reset: none;
+      }
+      .vhodit__spisok {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .vhodit__spisok li {
+        padding: 10px 0 10px 30px;
+        position: relative;
+        border-bottom: 1px solid var(--ramka);
+      }
+      .vhodit__spisok li::before {
+        content: "✓";
+        position: absolute;
+        left: 4px;
+        top: 10px;
+        color: var(--zelenyj);
+        font-weight: 700;
+      }
+      .razbor__tekst p strong {
+        color: var(--sinij);
+      }
+      .raschet {
+        background: var(--karta);
+        border-block: 1px solid var(--ramka);
+      }
+      .raschet__setka {
+        display: grid;
+        gap: clamp(18px, 3vw, 28px);
+        margin-top: 24px;
+      }
+      @media (min-width: 880px) {
+        .raschet__setka {
+          grid-template-columns: minmax(300px, 380px) 1fr;
+          align-items: start;
+        }
+      }
+      .voprosy .kartochka h3 {
+        color: var(--sinij);
+      }
+      .prizyv {
+        background: var(--sinij-svetlyj);
+      }
+      .podval {
+        background: var(--sinij);
+        color: #e7eef6;
+        padding: clamp(28px, 5vw, 48px) 0;
+        font-size: 15px;
+      }
+      .podval a {
+        color: #fff;
+      }
+      /* ОФОРМЛЕНИЕ: конец */
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="razdel ekran">
+        <div class="obolochka">
+          <p class="uslovno">Демонстрация. Компания и цены условные</p>
+          <h1>Натяжные потолки в квартире — за один день</h1>
+          <p class="ekran__podzagolovok">
+            Бригада «Потолок за день»: замер, монтаж и уборка в тот же день.
+            Комната площадью до 20 м² — 3–4 часа работы, жить можно с вечера.
+          </p>
+          <p><a class="knopka" href="#raschet">Посчитать смету</a></p>
+          <p class="tihij">
+            Смета появится прямо на этой странице: построчно, с итогом вилкой.
+            Телефон вводить не нужно, звонить вам никто не будет.
+          </p>
+        </div>
+      </section>
+
+      <section class="razdel polosa">
+        <div class="obolochka setka setka--4">
+          <div class="kartochka">
+            <p class="polosa__cifra">1 день</p>
+            <p class="tihij">от замера до готового потолка в одной комнате</p>
+          </div>
+          <div class="kartochka">
+            <p class="polosa__cifra">7 строк</p>
+            <p class="tihij">из которых складывается смета — все показаны</p>
+          </div>
+          <div class="kartochka">
+            <p class="polosa__cifra">0 ₽</p>
+            <p class="tihij">стоит расчёт, и телефон для него не нужен</p>
+          </div>
+          <div class="kartochka">
+            <p class="polosa__cifra">10 лет</p>
+            <p class="tihij">гарантия на полотно и на шов</p>
+          </div>
+        </div>
+        <p class="obolochka tihij">
+          Цифры условные: это демонстрация вёрстки и расчёта, а не предложение
+          существующей бригады.
+        </p>
+      </section>
+
+      <section class="razdel problema">
+        <div class="obolochka">
+          <h2>«Назвали цену за метр, а в счёте вышло вдвое больше»</h2>
+          <div class="setka setka--2">
+            <div class="kartochka">
+              <h3>Как это обычно происходит</h3>
+              <p>
+                На сайте написано «от 350 ₽ за м²». Человек считает свои 12
+                метров, получает 4 200 ₽ и зовёт замерщика. На замере
+                выясняется, что профиль считается отдельно, светильники
+                отдельно, обвод трубы отдельно, а старый потолок надо снять — и
+                это тоже отдельно. В договоре появляется 12 тысяч.
+              </p>
+            </div>
+            <div class="kartochka">
+              <h3>Что не так с этой цифрой</h3>
+              <p>
+                Она не врёт: полотно правда стоит 350 ₽ за метр. Врёт то, что её
+                называют ценой потолка. Потолок — это полотно, профиль по
+                периметру, углы, закладные под светильники, обводы труб и вывоз
+                старого покрытия. Поэтому ниже считается не «цена за метр», а
+                вся смета построчно.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="razdel shagi">
+        <div class="obolochka">
+          <h2>Как проходит работа</h2>
+          <ol class="shagi__spisok setka setka--2">
+            <li class="kartochka">
+              <h3>1. Расчёт на этой странице</h3>
+              <p>
+                Вы вводите размеры и пять уточнений — видите смету и вилку.
+                Ничего не отправляется и никуда не уходит.
+              </p>
+            </li>
+            <li class="kartochka">
+              <h3>2. Замер</h3>
+              <p>
+                Замерщик приезжает со стремянкой и лазерной рулеткой, смотрит
+                стены, углы и проводку. После замера цена становится точной.
+              </p>
+            </li>
+            <li class="kartochka">
+              <h3>3. Монтаж</h3>
+              <p>
+                Профиль по периметру, прогрев и натяжка полотна, врезка
+                светильников, обводы труб. Одна комната — 3–4 часа.
+              </p>
+            </li>
+            <li class="kartochka">
+              <h3>4. Уборка и приёмка</h3>
+              <p>
+                Мусор и старое полотно бригада увозит. Вы включаете свет,
+                смотрите швы и углы и подписываете работу.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="razdel vhodit">
+        <div class="obolochka">
+          <h2>Что уже входит в цену</h2>
+          <div class="setka setka--2">
+            <ul class="vhodit__spisok">
+              <li>Полотно и профиль по периметру</li>
+              <li>Первые четыре угла комнаты</li>
+              <li>Прогрев помещения и натяжка</li>
+              <li>Вынос и вывоз старого полотна, если его снимали</li>
+            </ul>
+            <ul class="vhodit__spisok">
+              <li>Уборка после монтажа</li>
+              <li>Гарантия 10 лет на полотно и шов</li>
+              <li>Выезд бригады — одной строкой на весь заказ</li>
+              <li>Повторный приезд, если что-то пошло не так по нашей вине</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="razdel razbor">
+        <div class="obolochka">
+          <h2>Разбор одной сметы</h2>
+          <p>
+            Кухня 3,2 × 2,8 м, матовое полотно, четыре точечных светильника,
+            один обвод трубы отопления, старый потолок снимаем. Вот откуда
+            берётся итог.
+          </p>
+          <div class="kartochka razbor__tekst">
+            <p>
+              <strong>Полотно, 8,96 м².</strong> Площадь пола равна площади
+              потолка, считается по внешним размерам комнаты. Цена за метр
+              зависит от типа полотна и берётся из прайса — её видно в
+              калькуляторе ниже.
+            </p>
+            <p>
+              <strong>Профиль, 12 м.</strong> Периметр, а не площадь: багет идёт
+              по стенам. Это отдельная строка именно потому, что её чаще всего
+              «забывают» в цене за метр.
+            </p>
+            <p>
+              <strong>Светильники, 4 шт.</strong> Под каждый ставится закладная
+              платформа на подвесах и врезается термокольцо. Это работа, а не
+              фурнитура.
+            </p>
+            <p>
+              <strong>Обвод трубы, 1 шт.</strong> Труба отопления проходит через
+              потолок: полотно надо разрезать, посадить на кольцо и
+              загерметизировать. Самая частая причина, по которой смета
+              расходится с расчётом по метрам.
+            </p>
+            <p>
+              <strong>Демонтаж, 8,96 м².</strong> Снять старое полотно, вынести
+              и вывезти. Если потолок в комнате первый — этой строки в смете не
+              будет.
+            </p>
+            <p>
+              <strong>Выезд, один раз.</strong> Не за комнату и не за метр:
+              бригада приезжает один раз, сколько бы комнат ни считали.
+            </p>
+            <p class="tihij">
+              Посчитать свою комнату можно ниже. Числа в разборе — из того же
+              прайса, по которому работает калькулятор.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="razdel raschet" id="raschet">
+        <div class="obolochka">
+          <h2>Смета на вашу комнату</h2>
+          <p>
+            Введите размеры и уточните пять вещей. Каждое уточнение сразу
+            двигает итог и подсвечивает строку, на которую повлияло.
+          </p>
+          <div class="raschet__setka">
+            <div class="raschet__upravlenie">
+              <!-- поля появятся в Task 6 -->
+            </div>
+            <div class="raschet__vyvod">
+              <div id="smeta"></div>
+              <div id="itogo"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="razdel voprosy">
+        <div class="obolochka">
+          <h2>Вопросы, которые задают до замера</h2>
+          <div class="setka">
+            <div class="kartochka">
+              <h3>Почему вилка, а не точная цена?</h3>
+              <p>
+                Потому что точную цену даёт замер. До него неизвестны состояние
+                стен, высота помещения и то, что скрыто за старым потолком.
+                Калькулятор, обещающий точную цену заранее, сначала занижает её,
+                а потом заставляет мастера объясняться у вас в квартире.
+              </p>
+            </div>
+            <div class="kartochka">
+              <h3>А если на замере цена вырастет?</h3>
+              <p>
+                Она может оказаться внутри вилки выше середины — для этого вилка
+                и нужна. Выйти за верхнюю границу она может только если на месте
+                обнаружится работа, которой не было в расчёте: например, потолок
+                придётся выравнивать. В этом случае вам называют новую цену до
+                начала работ, а не после.
+              </p>
+            </div>
+            <div class="kartochka">
+              <h3>Почему профиль считается отдельно от полотна?</h3>
+              <p>
+                Потому что это разные материалы и разные величины. Полотно
+                считается по площади, профиль — по периметру. В узкой длинной
+                комнате профиля уходит больше, чем в квадратной той же площади,
+                и одной ценой за метр это не описать.
+              </p>
+            </div>
+            <div class="kartochka">
+              <h3>Светильники входят в цену потолка?</h3>
+              <p>
+                Нет. В смету входит работа: закладная платформа, термокольцо,
+                врезка. Сами светильники вы покупаете сами и выбираете какие
+                хотите — так дешевле и честнее, чем брать их у бригады с
+                наценкой.
+              </p>
+            </div>
+            <div class="kartochka">
+              <h3>Зачем вообще показывать смету до звонка?</h3>
+              <p>
+                Чтобы вы могли сравнить нас с другими, не оставляя телефон.
+                Обмен цифры на контакт — самый частый приём в этой нише и самая
+                частая причина, по которой страницу закрывают. Смета здесь
+                появляется сразу и печатается одной кнопкой.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="razdel prizyv">
+        <div class="obolochka">
+          <h2>Записаться на замер</h2>
+          <!-- форма появится в Task 8 -->
+        </div>
+      </section>
+    </main>
+
+    <footer class="podval">
+      <div class="obolochka">
+        <!-- подвал появится в Task 8 -->
+      </div>
+    </footer>
+  </body>
+</html>
