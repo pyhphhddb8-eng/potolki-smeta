@@ -27,6 +27,10 @@ ADRES = (
 )
 OSI = ["opsz=16", "wght=400:700"]
 
+# Страница обязана возить шрифт с собой, поэтому он не может быть
+# безразмерным — бюджет веса задан одной константой.
+MAKS_VES_BAJT = 60 * 1024
+
 
 def simvoly_stranicy():
     """Все символы, которые страница может показать, плюс запас.
@@ -80,8 +84,13 @@ def main():
     )
     ves = podrezannyj.stat().st_size
     print(f"Готовый файл: {ves / 1024:.1f} КБ", file=sys.stderr)
-    if ves > 60 * 1024:
-        print("ВНИМАНИЕ: шрифт тяжелее 60 КБ, проверьте набор символов", file=sys.stderr)
+    if ves > MAKS_VES_BAJT:
+        print(
+            "ВНИМАНИЕ: шрифт тяжелее 60 КБ, проверьте набор символов — "
+            "правило не выведено",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     b64 = base64.b64encode(podrezannyj.read_bytes()).decode("ascii")
     print("/* Шрифт Inter, SIL Open Font License 1.1. Переменный файл подрезан */")
