@@ -105,3 +105,107 @@ test("расчёт ничего не знает про страницу", async 
     );
   }
 });
+
+/* — пять уточнений — */
+
+test("тип полотна двигает цену вверх по прайсу, а не произвольно", () => {
+  const matovoe = poschitat(vvod({ polotno: "matovoe" }), PRAJS);
+  const tkanevoe = poschitat(vvod({ polotno: "tkanevoe" }), PRAJS);
+  assert.ok(tkanevoe.itogo > matovoe.itogo);
+  assert.equal(
+    stroka(tkanevoe, "polotno").summa,
+    12 * PRAJS.polotno.tkanevoe.cena_za_m2,
+  );
+});
+
+test("неизвестный тип полотна не ломает расчёт, а берётся по умолчанию", () => {
+  const chush = poschitat(vvod({ polotno: "zolotoe" }), PRAJS);
+  const po_umolchaniyu = poschitat(
+    vvod({ polotno: PRAJS.polotno_po_umolchaniyu }),
+    PRAJS,
+  );
+  assert.equal(chush.itogo, po_umolchaniyu.itogo);
+});
+
+test("каждое уточнение двигает итог вверх и ровно на цену из прайса", () => {
+  const bazovyj = poschitat(vvod(), PRAJS).itogo;
+  const proverki = [
+    [{ svetilniki: 3 }, 3 * PRAJS.svetilnik],
+    [{ obvody: 2 }, 2 * PRAJS.obvod_truby],
+    [{ ugly: 2 }, 2 * PRAJS.ugol],
+    [{ demontazh: true }, 12 * PRAJS.demontazh_za_m2],
+  ];
+  for (const [izmenenie, nadbavka] of proverki) {
+    const r = poschitat(vvod(izmenenie), PRAJS);
+    assert.equal(
+      r.itogo,
+      bazovyj + nadbavka,
+      `уточнение ${JSON.stringify(izmenenie)} должно добавить ${nadbavka} ₽`,
+    );
+  }
+});
+
+test("нулевые уточнения не создают строк на ноль рублей", () => {
+  const r = poschitat(vvod(), PRAJS);
+  for (const id of ["ugly", "svetilniki", "obvody", "demontazh"]) {
+    assert.equal(
+      stroka(r, id),
+      undefined,
+      `строка ${id} не должна появляться при нуле`,
+    );
+  }
+});
+
+test("уточнения сверх предела отбрасываются", () => {
+  const r = poschitat(vvod({ svetilniki: 999, obvody: 999, ugly: 999 }), PRAJS);
+  assert.equal(stroka(r, "svetilniki").kolichestvo, PREDELY.svetilnikov);
+  assert.equal(stroka(r, "obvody").kolichestvo, PREDELY.obvodov);
+  assert.equal(stroka(r, "ugly").kolichestvo, PREDELY.uglov);
+});
+
+test("у каждой строки есть уточнение, по которому её подсвечивать", () => {
+  const r = poschitat(
+    vvod({ svetilniki: 2, obvody: 1, ugly: 1, demontazh: true }),
+    PRAJS,
+  );
+  const ozhidaem = {
+    polotno: "polotno",
+    profil: "razmery",
+    ugly: "ugly",
+    svetilniki: "svetilniki",
+    obvody: "obvody",
+    demontazh: "demontazh",
+    vyezd: null,
+  };
+  for (const [id, utochnenie] of Object.entries(ozhidaem)) {
+    assert.equal(stroka(r, id).utochnenie, utochnenie);
+  }
+});
+
+test("порядок строк в смете читается сверху вниз и не зависит от ввода", () => {
+  const r = poschitat(
+    vvod({ demontazh: true, ugly: 1, obvody: 1, svetilniki: 1 }),
+    PRAJS,
+  );
+  assert.deepEqual(
+    r.stroki.map((s) => s.id),
+    ["polotno", "profil", "ugly", "svetilniki", "obvody", "demontazh", "vyezd"],
+  );
+});
+
+test("итог по-прежнему равен сумме строк, когда включены все уточнения", () => {
+  const r = poschitat(
+    vvod({
+      svetilniki: 6,
+      obvody: 2,
+      ugly: 3,
+      demontazh: true,
+      polotno: "tkanevoe",
+    }),
+    PRAJS,
+  );
+  assert.equal(
+    r.itogo,
+    r.stroki.reduce((s, str) => s + str.summa, 0),
+  );
+});

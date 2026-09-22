@@ -74,6 +74,10 @@ export function poschitat(vvod, prajs) {
   const vid =
     prajs.polotno[vvod?.polotno] ?? prajs.polotno[prajs.polotno_po_umolchaniyu];
 
+  const ugly = Math.round(chislo(vvod?.ugly, PREDELY.uglov));
+  const svetilniki = Math.round(chislo(vvod?.svetilniki, PREDELY.svetilnikov));
+  const obvody = Math.round(chislo(vvod?.obvody, PREDELY.obvodov));
+
   const stroki = [
     stroka({
       id: "polotno",
@@ -93,6 +97,68 @@ export function poschitat(vvod, prajs) {
       cena: prajs.profil_za_m,
       utochnenie: "razmery",
     }),
+  ];
+
+  // Условные строки появляются только тогда, когда за них правда платят.
+  // Строка «0 шт · 0 ₽» в смете — это шум, из-за которого перестают читать
+  // и остальные строки.
+  if (ugly > 0) {
+    stroki.push(
+      stroka({
+        id: "ugly",
+        nazvanie: "Углы сверх четырёх",
+        poyasnenie: "Каждый лишний угол — это отдельный стык профиля",
+        kolichestvo: ugly,
+        edinica: "шт",
+        cena: prajs.ugol,
+        utochnenie: "ugly",
+      }),
+    );
+  }
+
+  if (svetilniki > 0) {
+    stroki.push(
+      stroka({
+        id: "svetilniki",
+        nazvanie: "Светильники",
+        poyasnenie: "Закладная платформа и врезка кольца под каждый",
+        kolichestvo: svetilniki,
+        edinica: "шт",
+        cena: prajs.svetilnik,
+        utochnenie: "svetilniki",
+      }),
+    );
+  }
+
+  if (obvody > 0) {
+    stroki.push(
+      stroka({
+        id: "obvody",
+        nazvanie: "Обводы труб",
+        poyasnenie: "Труба отопления, проходящая через потолок",
+        kolichestvo: obvody,
+        edinica: "шт",
+        cena: prajs.obvod_truby,
+        utochnenie: "obvody",
+      }),
+    );
+  }
+
+  if (vvod?.demontazh) {
+    stroki.push(
+      stroka({
+        id: "demontazh",
+        nazvanie: "Демонтаж старого потолка",
+        poyasnenie: "Снять прежнее полотно и вывезти мусор",
+        kolichestvo: ploshad,
+        edinica: "м²",
+        cena: prajs.demontazh_za_m2,
+        utochnenie: "demontazh",
+      }),
+    );
+  }
+
+  stroki.push(
     stroka({
       id: "vyezd",
       nazvanie: "Выезд бригады",
@@ -102,7 +168,7 @@ export function poschitat(vvod, prajs) {
       cena: prajs.vyezd,
       utochnenie: null,
     }),
-  ];
+  );
 
   const itogo = stroki.reduce((s, str) => s + str.summa, 0);
 
