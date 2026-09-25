@@ -143,6 +143,11 @@
         outline: 3px solid var(--akcent);
         outline-offset: 2px;
       }
+      /* display из .knopka сильнее встроенного правила браузера для
+         [hidden], поэтому спрятанную кнопку прячем явно. */
+      .knopka[hidden] {
+        display: none;
+      }
       .knopka--tihaya {
         background: transparent;
         color: var(--sinij);
@@ -334,6 +339,7 @@
         transition: background 0.25s ease;
       }
       .stroka__nazvanie {
+        grid-column: 1;
         font-weight: 600;
       }
       .stroka__poyasnenie,
@@ -342,9 +348,15 @@
         font-size: 14px;
         grid-column: 1;
       }
+      /* Сумма — во втором столбце, во всю высоту строки: слева название,
+         пояснение и счёт (три ряда), справа одна цифра по правому краю.
+         Без явного столбца сетка ставит сумму первой, в широкую колонку,
+         и смета читается задом наперёд — ценой вперёд, названием назад. */
       .stroka__summa {
-        grid-row: 1/3;
+        grid-column: 2;
+        grid-row: 1 / span 3;
         align-self: center;
+        text-align: right;
         font-weight: 700;
         font-variant-numeric: tabular-nums;
         white-space: nowrap;
@@ -696,10 +708,7 @@
               <strong>Выезд, один раз.</strong> Не за комнату и не за метр:
               бригада приезжает один раз, сколько бы комнат ни считали.
             </p>
-            <p class="tihij">
-              Посчитать свою комнату можно ниже. Числа в разборе — из того же
-              прайса, по которому работает калькулятор.
-            </p>
+            <p class="tihij">Посчитать свою комнату можно ниже.</p>
           </div>
         </div>
       </section>
@@ -711,6 +720,11 @@
             Введите размеры и уточните пять вещей. Каждое уточнение сразу
             двигает итог и подсвечивает строку, на которую повлияло.
           </p>
+          <!-- На бумаге то же самое говорит печатная шапка, поэтому здесь
+               пометка не печатается: дважды на одном листе — это уже шум. -->
+          <p class="uslovno ne-pechataem">
+            Компания и цены условные: это демонстрационный расчёт
+          </p>
           <div class="raschet__setka">
             <div class="raschet__upravlenie ne-pechataem">
               <fieldset class="pole">
@@ -718,7 +732,7 @@
                 <div id="komnaty"></div>
                 <button
                   type="button"
-                  class="knopka--tihaya"
+                  class="knopka knopka--tihaya"
                   id="dobavit-komnatu"
                 >
                   Добавить комнату
@@ -801,7 +815,7 @@
               <div id="itogo"></div>
 
               <p class="ne-pechataem">
-                <button type="button" class="knopka--tihaya" id="pechat">
+                <button type="button" class="knopka knopka--tihaya" id="pechat">
                   Распечатать смету
                 </button>
               </p>
@@ -981,9 +995,9 @@
       const rubli = (n) =>
         n.toLocaleString("ru-RU").replace(/ |\s/g, " ") + " ₽";
 
-      /** Количество: целое печатаем целым, дробное — с запятой. */
-      const kolvo = (n) =>
-        Number.isInteger(n) ? String(n) : n.toFixed(2).replace(".", ",");
+      /** Количество: целое печатаем целым, дробное — с запятой и без
+          хвоста из нулей. 13,5 м² — это 13,5 м², а не 13,50 м². */
+      const kolvo = (n) => String(Math.round(n * 100) / 100).replace(".", ",");
 
       function element(teg, klass, tekst) {
         const uzel = document.createElement(teg);
@@ -1048,6 +1062,17 @@
         vybor_polotna.append(punkt);
       }
       vybor_polotna.value = PRAJS.polotno_po_umolchaniyu;
+
+      /* — пределы уточнений ставим в поля из PREDELY: иначе поле принимает
+         пятьдесят светильников, а смета считает тридцать, и молча — */
+
+      for (const [id, predel] of [
+        ["svetilniki", PREDELY.svetilnikov],
+        ["obvody", PREDELY.obvodov],
+        ["ugly", PREDELY.uglov],
+      ]) {
+        naiti(id).max = String(predel);
+      }
 
       /* — сбор ввода и перерисовка — */
 

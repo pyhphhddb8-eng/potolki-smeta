@@ -57,7 +57,11 @@ export function poschitat(vvod, prajs) {
     .map((k) => ({
       dlina: chislo(k?.dlina, PREDELY.storona),
       shirina: chislo(k?.shirina, PREDELY.storona),
-    }));
+    }))
+    // Комната считается только целиком. Одна сторона без второй не даёт
+    // площади, но дала бы периметр: недописанная «4 × » тихо добавляла бы
+    // восемь метров профиля в смету, где этой комнаты не видно.
+    .filter((k) => k.dlina > 0 && k.shirina > 0);
 
   const ploshad = metry(komnaty.reduce((s, k) => s + k.dlina * k.shirina, 0));
   const perimetr = metry(

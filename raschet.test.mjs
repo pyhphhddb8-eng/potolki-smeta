@@ -76,6 +76,52 @@ test("комнаты сверх предела отбрасываются, а н
   assert.equal(r.ploshad, 12 * PREDELY.komnat);
 });
 
+test("недозаполненная комната не считается: ни площади, ни профиля", () => {
+  const odna = poschitat(vvod(), PRAJS);
+  const s_polovinoj = poschitat(
+    vvod({
+      komnaty: [
+        { dlina: 3, shirina: 4 },
+        { dlina: 4, shirina: "" },
+      ],
+    }),
+    PRAJS,
+  );
+  // Длина без ширины — это не комната: 2 × (4 + 0) метров профиля в смете,
+  // где этой комнаты не видно, дороже самого полотна.
+  assert.equal(s_polovinoj.ploshad, odna.ploshad);
+  assert.equal(s_polovinoj.perimetr, odna.perimetr);
+  assert.equal(
+    stroka(s_polovinoj, "profil").summa,
+    stroka(odna, "profil").summa,
+  );
+  assert.equal(s_polovinoj.itogo, odna.itogo);
+});
+
+test("полностью заполненная вторая комната по-прежнему считается", () => {
+  const dve = poschitat(
+    vvod({
+      komnaty: [
+        { dlina: 3, shirina: 4 },
+        { dlina: 2, shirina: 2.5 },
+      ],
+    }),
+    PRAJS,
+  );
+  assert.equal(dve.ploshad, 17);
+  assert.equal(dve.perimetr, 14 + 9);
+});
+
+test("сторона длиннее предела обрезается до предела, а не считается целиком", () => {
+  const r = poschitat(vvod({ komnaty: [{ dlina: 999, shirina: 4 }] }), PRAJS);
+  assert.equal(r.ploshad, PREDELY.storona * 4);
+  assert.equal(r.perimetr, 2 * (PREDELY.storona + 4));
+  assert.equal(
+    stroka(r, "polotno").summa,
+    PREDELY.storona * 4 * PRAJS.polotno.matovoe.cena_za_m2,
+  );
+});
+
 test("нулевая площадь даёт пустую смету и нулевой итог, а не выезд ни за что", () => {
   const r = poschitat(vvod({ komnaty: [{ dlina: 0, shirina: 0 }] }), PRAJS);
   assert.deepEqual(r.stroki, []);
@@ -212,7 +258,7 @@ test("итог по-прежнему равен сумме строк, когд�
 
 /* — вилка — */
 
-test("нижняя граница вилки никогда не выше верхней", () => {
+test("вилка не вывернута и всегда накрывает сумму строк", () => {
   const nabory = [
     vvod(),
     vvod({ komnaty: [{ dlina: 1.2, shirina: 1.1 }] }),
@@ -237,6 +283,14 @@ test("нижняя граница вилки никогда не выше вер
     assert.ok(
       r.vilka.ot <= r.vilka.do,
       `вилка вывернута: ${JSON.stringify(r.vilka)}`,
+    );
+    // Сумма строк обязана лежать внутри вилки: страница печатает её под
+    // вилкой, и «Сумма строк — 900 ₽» под «от 1 000 ₽» — это ложь на бумаге.
+    // Держится это на выезде: при слишком дешёвом выезде мелкая смета
+    // округляется вверх и вылезает из нижней границы.
+    assert.ok(
+      r.vilka.ot <= r.itogo && r.itogo <= r.vilka.do,
+      `итог ${r.itogo} ₽ вне вилки ${JSON.stringify(r.vilka)}`,
     );
   }
 });

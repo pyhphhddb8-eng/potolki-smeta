@@ -243,6 +243,9 @@ otmetit(
 /* — 9. Печатается смета, а не страница — */
 await page.setViewportSize({ width: 1280, height: 900 });
 await page.emulateMedia({ media: "print" });
+// emulateMedia не вызывает beforeprint, а дату ставит именно он. Без этого
+// события поле даты пустое, и проверка шапки проходит на пустой шапке.
+await page.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
 otmetit(
   (await page.locator(".ekran").isVisible()) === false,
   "первый экран не спрятан при печати",
@@ -254,6 +257,18 @@ otmetit(
 otmetit(
   (await page.locator("#pechatnaya-shapka").isVisible()) === true,
   "нет печатной шапки с датой и оговоркой",
+);
+const data_pechati =
+  (await page.locator("#data-rascheta").textContent())?.trim() || "";
+otmetit(
+  /^Расчёт от .*\d{4}/.test(data_pechati),
+  `в печатной шапке нет даты расчёта: «${data_pechati}»`,
+);
+otmetit(
+  /условные/.test(
+    (await page.locator(".pechatnaya-shapka__ogovorka").textContent()) || "",
+  ),
+  "в печатной шапке нет оговорки про условные цены",
 );
 otmetit(
   (await page.locator(".smeta__spisok").isVisible()) === true,
