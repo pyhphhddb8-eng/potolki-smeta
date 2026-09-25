@@ -1,5 +1,6 @@
 // Скриншоты для показа. Запуск: npm run shot
-// Кладёт в tools/shots/: страницу целиком на 1280 и на 360 и печатный вид PDF.
+// Кладёт в tools/shots/: страницу целиком на 1280 и на 360, раздел расчёта
+// со сметой и печатный вид PDF.
 import { createServer } from "node:http";
 import { readFile, mkdir } from "node:fs/promises";
 import {
@@ -76,8 +77,12 @@ await page.goto(`http://127.0.0.1:${PORT}/#raschet`, {
 await page.fill("#svetilniki", "4");
 await page.fill("#obvody", "1");
 await page.check("#demontazh");
-await page.waitForTimeout(100);
-await page.screenshot({ path: join(SHOTS, "smeta.png") });
+// Поля прокручивают страницу к себе, и последняя галочка уводит окно ниже
+// самой сметы. Поэтому снимаем не окно, а весь раздел расчёта: на картинке
+// нужны строки, вилка и подсвеченная строка демонтажа. Ждём дольше подсветки
+// (переход 0,25 с), но заметно меньше, чем она держится (1,2 с).
+await page.waitForTimeout(400);
+await page.locator("#raschet").screenshot({ path: join(SHOTS, "smeta.png") });
 await page.pdf({
   path: join(SHOTS, "smeta-pechat.pdf"),
   format: "A4",

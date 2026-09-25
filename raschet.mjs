@@ -24,6 +24,15 @@ function metry(znachenie) {
   return Math.round(znachenie * 100) / 100;
 }
 
+/**
+ * Строчной делается только первая буква: «Матовое ПВХ» → «матовое ПВХ».
+ * Целиком строчными аббревиатура превращается в «пвх», а прайс правит не
+ * программист — названия там пишутся так, как их видно в списке выбора.
+ */
+function s_malenkoj(tekst) {
+  return tekst.slice(0, 1).toLowerCase() + tekst.slice(1);
+}
+
 /** До сотен рублей: вилка с точностью до рубля перестаёт быть вилкой. */
 function sotni(rubli) {
   return Math.round(rubli / 100) * 100;
@@ -90,7 +99,7 @@ export function poschitat(vvod, prajs) {
   const stroki = [
     stroka({
       id: "polotno",
-      nazvanie: `Полотно: ${vid.nazvanie.toLowerCase()}`,
+      nazvanie: `Полотно: ${s_malenkoj(vid.nazvanie)}`,
       poyasnenie: "Считается по площади комнат",
       kolichestvo: ploshad,
       edinica: "м²",

@@ -164,6 +164,31 @@ test("тип полотна двигает цену вверх по прайсу
   );
 });
 
+test("в названии строки строчной становится первая буква, а не «ПВХ»", () => {
+  for (const klyuch of ["matovoe", "satinovoe", "glyancevoe"]) {
+    const vid = PRAJS.polotno[klyuch];
+    const nazvanie = stroka(
+      poschitat(vvod({ polotno: klyuch }), PRAJS),
+      "polotno",
+    ).nazvanie;
+    // Аббревиатура пишется прописными и в середине фразы: «матовое пвх»
+    // в первой же строке сметы читается как небрежность.
+    assert.ok(
+      nazvanie.includes("ПВХ"),
+      `в «${nazvanie}» аббревиатура ПВХ потеряла прописные`,
+    );
+    assert.equal(
+      nazvanie,
+      `Полотно: ${vid.nazvanie[0].toLowerCase()}${vid.nazvanie.slice(1)}`,
+    );
+  }
+  // Название без аббревиатуры просто начинается со строчной.
+  assert.equal(
+    stroka(poschitat(vvod({ polotno: "tkanevoe" }), PRAJS), "polotno").nazvanie,
+    "Полотно: тканевое",
+  );
+});
+
 test("неизвестный тип полотна не ломает расчёт, а берётся по умолчанию", () => {
   const chush = poschitat(vvod({ polotno: "zolotoe" }), PRAJS);
   const po_umolchaniyu = poschitat(
