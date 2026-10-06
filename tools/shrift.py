@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Разовая подготовка шрифта: скачать Inter, подрезать, выдать base64.
+"""Разовая подготовка шрифта: скачать Bitter, подрезать, выдать base64.
 
 Запуск: python3 tools/shrift.py > tools/.shrift-vremenno/pravila.css
 
@@ -7,8 +7,8 @@
 Набор символов берётся из самого index.html, поэтому скрипт можно
 перезапустить, когда текст страницы изменится.
 
-Берётся переменный файл Inter: одна ось начертания вместо трёх отдельных
-файлов на 400, 600 и 700.
+Берётся переменный файл Bitter: одна ось начертания вместо трёх отдельных
+файлов на 400, 600 и 700. Брусковый шрифт — от мира замерщика и сметы.
 """
 import base64
 import pathlib
@@ -22,10 +22,10 @@ VREMENNO = KOREN / "tools" / ".shrift-vremenno"
 VREMENNO.mkdir(exist_ok=True)
 
 ADRES = (
-    "https://raw.githubusercontent.com/google/fonts/main/ofl/inter/"
-    "Inter%5Bopsz%2Cwght%5D.ttf"
+    "https://raw.githubusercontent.com/google/fonts/main/ofl/bitter/"
+    "Bitter%5Bwght%5D.ttf"
 )
-OSI = ["opsz=16", "wght=400:700"]
+OSI = ["wght=400:700"]
 
 # Страница обязана возить шрифт с собой, поэтому он не может быть
 # безразмерным — бюджет веса задан одной константой.
@@ -55,13 +55,13 @@ def simvoly_stranicy():
 
 
 def main():
-    syroj = VREMENNO / "inter-var.ttf"
+    syroj = VREMENNO / "bitter-var.ttf"
     if not syroj.exists():
-        print("Качаю Inter…", file=sys.stderr)
+        print("Качаю Bitter…", file=sys.stderr)
         with urllib.request.urlopen(ADRES) as otvet:
             syroj.write_bytes(otvet.read())
 
-    suzhennyj = VREMENNO / "inter-suzhennyj.ttf"
+    suzhennyj = VREMENNO / "bitter-suzhennyj.ttf"
     subprocess.run(
         [sys.executable, "-m", "fontTools.varLib.instancer", str(syroj)]
         + OSI + ["-o", str(suzhennyj)],
@@ -70,7 +70,7 @@ def main():
 
     nabor = simvoly_stranicy()
     print(f"Символов в наборе: {len(nabor)}", file=sys.stderr)
-    podrezannyj = VREMENNO / "inter.woff2"
+    podrezannyj = VREMENNO / "bitter.woff2"
     subprocess.run(
         [
             sys.executable, "-m", "fontTools.subset", str(suzhennyj),
@@ -93,10 +93,10 @@ def main():
         sys.exit(1)
 
     b64 = base64.b64encode(podrezannyj.read_bytes()).decode("ascii")
-    print("/* Шрифт Inter, SIL Open Font License 1.1. Переменный файл подрезан */")
+    print("/* Шрифт Bitter, SIL Open Font License 1.1. Переменный файл подрезан */")
     print("/* под набор символов этой страницы: tools/shrift.py */")
     print("@font-face{")
-    print('  font-family:"Inter";font-style:normal;font-weight:400 700;')
+    print('  font-family:"Bitter";font-style:normal;font-weight:400 700;')
     print("  font-display:swap;")
     print(f'  src:url(data:font/woff2;base64,{b64}) format("woff2");')
     print("}")
